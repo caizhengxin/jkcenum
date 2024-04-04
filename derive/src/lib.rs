@@ -1,4 +1,4 @@
-#![feature(let_chains)]
+#![cfg_attr(feature = "nightly", feature(let_chains))]
 extern crate proc_macro;
 
 mod attribute;

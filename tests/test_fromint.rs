@@ -1,4 +1,4 @@
-#![feature(exclusive_range_pattern)]
+#![cfg_attr(feature = "nightly", feature(exclusive_range_pattern))]
 use jkcenum_derive::JkcEnum;
 use jkcenum::FromInt;
 
