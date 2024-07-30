@@ -1,4 +1,11 @@
-use thiserror::Error;
+#[cfg(not(feature = "std"))]
+use core::{
+    fmt::Debug,
+    write,
+};
+#[cfg(not(feature = "std"))]
+use alloc::string::String;
+use thiserror_no_std::Error;
 
 
 #[derive(Debug, Error)]

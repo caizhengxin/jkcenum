@@ -20,12 +20,18 @@
 jkcenum = { git = "https://github.com/caizhengxin/jkcenum.git", features = ["derive"] }
 ```
 
+no_std:
+
+```conf
+[dependencies]
+jkcenum = { git = "https://github.com/caizhengxin/jkcenum.git", default-features = false, features = ["derive"] }
+```
+
 > from_str
 
 ```rust
 use std::str::FromStr;
 use jkcenum::JkcEnum;
-
 
 
 #[derive(Debug, PartialEq, Eq, JkcEnum)]
