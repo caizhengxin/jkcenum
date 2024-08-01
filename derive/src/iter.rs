@@ -1,3 +1,9 @@
+#[cfg(not(feature = "std"))]
+use alloc::{
+    vec::Vec,
+};
+
+
 #[derive(Debug, Clone)]
 pub struct EnumIterator<T>
 {

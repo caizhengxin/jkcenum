@@ -1,3 +1,11 @@
+#[cfg(not(feature = "std"))]
+use alloc::{
+    vec,
+    vec::Vec,
+    format,
+    string::String,
+    string::ToString,
+};
 #[allow(unused_imports)]
 use virtue::{generate::Generator, parse::IdentOrIndex};
 use virtue::prelude::*;
@@ -81,13 +89,23 @@ impl DeriveEnum {
     pub fn generate_enum_to_vec(&self, generator: &mut Generator) -> Result<()> {
         let enum_name = generator.target_name();
 
+        #[cfg(feature = "std")]
+        let return_type = format!("Vec<{enum_name}>");
+        #[cfg(not(feature = "std"))]
+        let return_type = format!("alloc::vec::Vec<{enum_name}>");
+
+        #[cfg(feature = "std")]
+        let vec_m = "vec!";
+        #[cfg(not(feature = "std"))]
+        let vec_m = "alloc::vec!";
+
         generator
             .r#impl()
             .generate_fn("to_vec")
-            .with_return_type(format!("Vec<{enum_name}>"))
+            .with_return_type(return_type)
             .make_pub()
             .body(|fn_builder| {
-                fn_builder.push_parsed("vec!")?;
+                fn_builder.push_parsed(vec_m)?;
 
                 fn_builder.group(Delimiter::Bracket, |variant_case| {
                     for (mut _variant_index, variant) in self.iter_fields() {
@@ -104,11 +122,21 @@ impl DeriveEnum {
     }
 
     pub fn generate_enum_to_string(&self, generator: &mut Generator) -> Result<()> {
+        #[cfg(feature = "std")]
+        let to_string_type = "std::string::ToString";
+        #[cfg(not(feature = "std"))]
+        let to_string_type = "alloc::string::ToString";
+
+        #[cfg(feature = "std")]
+        let string_type = "std::string::String";
+        #[cfg(not(feature = "std"))]
+        let string_type = "alloc::string::String";
+
         generator
-            .impl_for("ToString")
+            .impl_for(to_string_type)
             .generate_fn("to_string")
             .with_self_arg(FnSelfArg::RefSelf)
-            .with_return_type("String")
+            .with_return_type(string_type)
             .body(|fn_builder| {
                 fn_builder.push_parsed("match self")?;
 
@@ -132,12 +160,18 @@ impl DeriveEnum {
     }
 
     pub fn generate_enum_from_str(&self, generator: &mut Generator) -> Result<()> {
-        let mut generator = generator.impl_for("std::str::FromStr");
+        #[cfg(feature = "std")]
+        let from_str_type = "std::str::FromStr";
+        #[cfg(not(feature = "std"))]
+        let from_str_type = "core::str::FromStr";
+        let mut generator = generator.impl_for(from_str_type);
             generator.impl_type("Err", "jkcenum::errors::FromStrParseError")?;
             generator.generate_fn("from_str")
             .with_arg("s", "&str")
             .with_return_type("Result<Self, Self::Err>")
             .body(|fn_builder| {
+                #[cfg(not(feature = "std"))]
+                fn_builder.push_parsed("use crate::alloc::string::ToString;")?;
                 fn_builder.push_parsed("match s")?;
 
                 fn_builder.group(Delimiter::Brace, |variant_case| {

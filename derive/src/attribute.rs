@@ -1,3 +1,9 @@
+#[cfg(not(feature = "std"))]
+use alloc::{
+    vec::Vec,
+    string::String,
+    string::ToString,
+};
 use virtue::prelude::*;
 use virtue::utils::*;
 
@@ -15,10 +21,12 @@ fn parse_value_string(value: &Literal) -> Result<String> {
 
 #[derive(Debug)]
 pub struct ContainerAttributes {
+    #[allow(dead_code)]
     pub crate_name: String,
     pub is_serde: bool,
     pub lowercase: bool,
     pub uppercase: bool,
+    #[allow(dead_code)]
     pub rename_all: Option<String>,
     pub desc: bool, // description, eg: "SnakeCase" to "Snake Case"
 }
