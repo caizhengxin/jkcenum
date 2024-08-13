@@ -17,7 +17,7 @@ keywords = [
     "jkcenum",
     "jenum",
 ]
-license-file = "LICENSE"
+license = "MIT OR Apache-2.0"
 include = [
     "src/*",
     "derive/src/*",
@@ -35,7 +35,7 @@ members = [
 ]
 
 [features]
-default = ["std"]
+default = ["std", "derive"]
 std = ["jkcenum_derive/std"]
 derive = ["jkcenum_derive"]
 
