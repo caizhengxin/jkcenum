@@ -1,4 +1,6 @@
-#![cfg_attr(feature = "nightly", feature(exclusive_range_pattern))]
+#[cfg(not(feature = "std"))]
+extern crate alloc;
+
 use jkcenum_derive::JkcEnum;
 use jkcenum::FromInt;
 

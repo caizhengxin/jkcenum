@@ -1,4 +1,3 @@
-#![cfg_attr(feature = "nightly", feature(let_chains))]
 #![cfg_attr(not(feature = "std"), no_std)]
 
 extern crate proc_macro;
@@ -68,7 +67,7 @@ fn derive_jkcenum_to_string_inner(input: TokenStream) -> Result<TokenStream> {
                 variants: body.variants,
                 attributes,
             }
-            .generate_enum_to_string(&mut generator)?;
+            .generate_enum_display(&mut generator)?;
         }
     }
 

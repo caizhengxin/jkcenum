@@ -1,3 +1,7 @@
+#[cfg(not(feature = "std"))]
+extern crate alloc;
+
+
 use jkcenum_derive::JkcEnum;
 
 

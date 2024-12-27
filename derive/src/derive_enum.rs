@@ -78,7 +78,7 @@ impl DeriveEnum {
     }
 
     pub fn generate_jkcenum(&self, generator: &mut Generator) -> Result<()> {
-        self.generate_enum_to_string(generator)?;
+        self.generate_enum_display(generator)?;
         self.generate_enum_from_str(generator)?;
         self.generate_enum_to_vec(generator)?;
         self.generate_enum_from_int(generator)?;
@@ -121,22 +121,51 @@ impl DeriveEnum {
         Ok(())
     }
 
-    pub fn generate_enum_to_string(&self, generator: &mut Generator) -> Result<()> {
-        #[cfg(feature = "std")]
-        let to_string_type = "std::string::ToString";
-        #[cfg(not(feature = "std"))]
-        let to_string_type = "alloc::string::ToString";
+    // pub fn generate_enum_to_string(&self, generator: &mut Generator) -> Result<()> {
+    //     #[cfg(feature = "std")]
+    //     let to_string_type = "std::string::ToString";
+    //     #[cfg(not(feature = "std"))]
+    //     let to_string_type = "alloc::string::ToString";
 
-        #[cfg(feature = "std")]
-        let string_type = "std::string::String";
-        #[cfg(not(feature = "std"))]
-        let string_type = "alloc::string::String";
+    //     #[cfg(feature = "std")]
+    //     let string_type = "std::string::String";
+    //     #[cfg(not(feature = "std"))]
+    //     let string_type = "alloc::string::String";
 
+    //     generator
+    //         .impl_for(to_string_type)
+    //         .generate_fn("to_string")
+    //         .with_self_arg(FnSelfArg::RefSelf)
+    //         .with_return_type(string_type)
+    //         .body(|fn_builder| {
+    //             fn_builder.push_parsed("match self")?;
+
+    //             fn_builder.group(Delimiter::Brace, |variant_case| {
+    //                 for (mut _variant_index, variant) in self.iter_fields() {
+    //                     variant_case.push_parsed(format!("Self::{}", &variant.name))?;
+    //                     variant_case.puncts("=>");
+
+    //                     let attributes = variant.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
+
+    //                     variant_case.push_parsed(format!("\"{}\".to_string(),", &self.get_field_name(&attributes, &variant.name)))?;
+    //                 }
+
+    //                 Ok(())
+    //             })?;
+
+    //             Ok(())
+    //         })?;
+
+    //     Ok(())
+    // }
+
+    pub fn generate_enum_display(&self, generator: &mut Generator) -> Result<()> {
         generator
-            .impl_for(to_string_type)
-            .generate_fn("to_string")
+            .impl_for("core::fmt::Display")
+            .generate_fn("fmt")
             .with_self_arg(FnSelfArg::RefSelf)
-            .with_return_type(string_type)
+            .with_arg("f", "&mut core::fmt::Formatter<'_>")
+            .with_return_type("core::fmt::Result")
             .body(|fn_builder| {
                 fn_builder.push_parsed("match self")?;
 
@@ -147,7 +176,7 @@ impl DeriveEnum {
 
                         let attributes = variant.attributes.get_attribute::<FieldAttributes>()?.unwrap_or_default();
 
-                        variant_case.push_parsed(format!("\"{}\".to_string(),", &self.get_field_name(&attributes, &variant.name)))?;
+                        variant_case.push_parsed(format!("write!(f, \"{{}}\", \"{}\"),", &self.get_field_name(&attributes, &variant.name)))?;
                     }
 
                     Ok(())

@@ -1,3 +1,6 @@
+#[cfg(not(feature = "std"))]
+extern crate alloc;
+
 use std::str::FromStr;
 use jkcenum_derive::JkcEnum;
 

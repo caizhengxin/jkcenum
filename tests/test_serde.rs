@@ -1,5 +1,7 @@
-use std::str::FromStr;
+#[cfg(not(feature = "std"))]
+extern crate alloc;
 
+use core::str::FromStr;
 use jkcenum_derive::JkcEnum;
 use serde::{Serialize, Deserialize};
 
