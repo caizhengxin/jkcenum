@@ -17,14 +17,14 @@
 
 ```conf
 [dependencies]
-jkcenum = { version = "0.3.2", features = ["derive"] }
+jkcenum = { version = "0.3.3", features = ["derive"] }
 ```
 
 no_std:
 
 ```conf
 [dependencies]
-jkcenum = { version = "0.3.2", default-features = false, features = ["derive"] }
+jkcenum = { version = "0.3.3", default-features = false, features = ["derive"] }
 ```
 
 > from_str
